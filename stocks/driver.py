@@ -22,7 +22,7 @@
 # 	The information is updated in an information database (say stocks now.db for example). The name of the table will be StockData. 
 # 	Use sqlite3 database.
 # [x] – There should be another function, say fetch all data() of the class that calls the above function for each input ticker.
-# [\] – The fetch all data() function should run for specified time period, say time lim in seconds and update the data in the database table.
+# [x] – The fetch all data() function should run for specified time period, say time lim in seconds and update the data in the database table.
 # [] – For each ticker in the tickers.txt file, the database table, should have one row for each minute.
 # [x] – The Time column should contain time in the HH:MM format with HH ranging from 00 to 23. There
 # 	should be one and only one row corresponding to a specific value of Time and Ticker.
@@ -31,13 +31,13 @@
 # 	quote() function of the Stock corresponding to the ticker.
 # [x] – The table must have following columns:
 # 	Time, Ticker, Low, High, Open, Close, Price, Volume
-# [] – Store the time of the query and the respective keys and values in the database table where the Price
+# [x] – Store the time of the query and the respective keys and values in the database table where the Price
 # 	column stores latestPrice and Volume column stores latestVolume. For each iteration, during which
 # 	you save the data for a specific minute, you may wait till the start of the next minute, say, 12:37 and
 # 	then save the data for all tickers during that iteration with the Time field set to the minute (12:37).
-# [] – The class must have a method for initialization of its objects and any other methods you feel are
+# [x] – The class must have a method for initialization of its objects and any other methods you feel are
 # 	necessary.
-# [] – You may assume that your code will be tested on an empty database that you have to create based on
+# [x] – You may assume that your code will be tested on an empty database that you have to create based on
 # 	the name of the database file provided.
 # [x] – Please use the information on the API page to figure out how to install iex-api-python. The page also
 # 	has the information for fetching necessary data about a stock ticker.
@@ -65,17 +65,22 @@ from itertools import islice
 class fetcher():
 	def __init__(self, time_limit, db):
 		"""
-		fetcher class
+		Fetcher Class
 			
+		args:
+			time_limit - the amount of time to run the fetch_all_data method for.
+			db - name of the database given from a command line arg
+
+		use:
+			initialized the time_limit and database name of the class
 		"""
 		self.__db = db
 		self.__time_limit = int(time_limit)
 		
 
-	def _update_stock(self, ticker, c):
+	def update_stock(self, ticker, c):
 		"""
 		args:
-			db - the databse
 			ticker - the ticker to update
 			c - cursor to execute sql commands
 		use:
@@ -103,15 +108,18 @@ class fetcher():
 		# start and create database
 		db = sqlite3.connect(self.__db)
 		c = db.cursor()
-		create_table = "create table if not exists StockData(Time text, Symbol text, Low text, High text, Open text, Close text, Price text, Volume text)"
+		drop_table = "drop table if exists StockData"
+		create_table = "create table StockData(Time text, Symbol text, Low text, High text, Open text, Close text, Price text, Volume text)"
+		c.execute(drop_table)
 		c.execute(create_table)
 
 		start_time = time.time()
 		t = 1
 
+		# run update_stock method on each ticker provided every minute untill time_limit is reached
 		while (time.time() - start_time) < self.__time_limit:
 			for tic in tickers:
-				self._update_stock(tic, c)
+				self.update_stock(tic, c)
 			print(f'minute {t}')
 
 			if (time.time() - start_time) + 60 > self.__time_limit:
@@ -128,11 +136,17 @@ class fetcher():
 		for t, s, *h, p, v in c.execute(sql_cmd):
 			print(f"{t:<10}{s:<10}{p:<10}{v:<10}")
 
-
+		# commit and close database
 		db.commit()
 		db.close()
 
 def arg_parser(args):
+	"""
+	args:
+		args - sys.argv list
+	use:
+		parses the list and splits them to get rid of the command line flag names
+	"""
 	return [x.split("=")[1] for x in args[1:]]
 
 
@@ -150,63 +164,3 @@ if __name__ == '__main__':
 	else:
 		print("Invalid use of '--operation'")
 
-
-
-
-# async def main():
-# 	tasks = []
-# 	res = []
-# 	async with aiohttp.ClientSession() as session:
-# 		for t in get_tickers(sys.argv[2]):
-# 			tasks.append(fetch(session, t))
-# 		quotes = await asyncio.gather(*tasks)
-# 		for q in quotes:
-# 			t = datetime.time(datetime.now()).isoformat(timespec='minutes')
-# 			res.append([t, q['symbol'], q['latestPrice'], q['latestVolume'], q['close'], q['open'], q['low'], q['high']])
-# 	return res
-
-# def get_tickers(fname):
-# 	'''
-# 		args:
-# 			fname - file name of tickers file
-
-# 		Takes the file name, opens it and returns the contents in a list
-# 	'''
-# 	with open(fname) as file:
-# 		t = [line.strip("\n") for line in file]
-# 	return t
-
-# async def fetch(session, ticker):
-# 	'''
-# 		args:
-# 			ticker - ticker symbol used to look up its stock info
-# 			session - used in the async routine of calling the api
-
-# 		Takes the ticker and looks up its stock info. 
-# 		Info is fetched from the api and returned as a dict in json form
-
-# 	'''	
-# 	async with session.get(f'https://api.iextrading.com/1.0/stock/{ticker}/quote?displayPercent=false') as response:
-# 		return await response.json()
-		
-# if __name__ == '__main__':
-# 	header = ["Time", "Ticker", "latestPrice", "latestVolume", "Close", "Open", "low", "high"]
-# 	# open csv
-# 	final = pd.DataFrame([], columns=header)
-
-# 	start_time = time.time()
-
-# 	# fetches stcok info every minute until time limit is reached
-# 	t = 1
-# 	while (time.time() - start_time) < int(sys.argv[1]):
-# 		df = pd.DataFrame(asyncio.run(main()), columns=header)
-# 		final = final.append(df, ignore_index=True)
-# 		print(f'minute {t}')
-# 		if (time.time() - start_time) > int(sys.argv[1]):
-# 			break
-# 			print("Done!")
-# 		else:
-# 			time.sleep(60)
-# 		t += 1
-# 	final.sort_values(by=['Ticker', 'Time'], inplace=True)
-# 	final.to_csv(sys.argv[3], index=False)
