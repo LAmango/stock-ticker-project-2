@@ -2,11 +2,14 @@
 ### Ticker Class ###
 ####################
 
-# [] – Have a function, say save tickers that fetches the first n valid tickers from the URL 1 and writes the
-#	tickers in a file, say tickers.txt.
-# [] – To ensure that a ticker is valid, you should use the iex-api-python to verify that the price function
-#	for the Stock corresponding to the fetched ticker works. That is, if there are some tickers for which the
-# 	price() function of the iex API does not work, then that ticker should not be written to the file.
+# [] – Have a function, say save tickers that fetches the first 
+#      n valid tickers from the URL 1 and writes the tickers in 
+#      a file, say tickers.txt.
+# [] – To ensure that a ticker is valid, you should use the 
+#      iex-api-python to verify that the price function for 
+#      the Stock corresponding to the fetched ticker works. 
+#      That is, if there are some tickers for which the price() 
+#      function of the iex API does not work, then that ticker should not be written to the file.
 # [] – Write one ticker symbol per line of the file tickers.txt. The number n will be provided to the driver
 #	as an optional argument and will be at most 110.
 # [] – The class must have a method for initialization of its objects and any other methods you feel are
@@ -61,6 +64,9 @@ from iex import Stock
 import time
 import sqlite3
 from itertools import islice
+
+class ticker():
+	pass
 
 class fetcher():
 	def __init__(self, time_limit, db):
@@ -145,7 +151,8 @@ def main(args):
 
 	operation, *args = arg_parser(sys.argv)
 
-	if operation == "Ticker":	
+	if operation == "Ticker":
+		# ticker(args[1], args[2])	
 		pass
 	elif operation == "Fetcher":
 		f = fetcher(args[1], args[2])
