@@ -141,9 +141,10 @@ class fetcher():
 		db.close()
 
 def main(args):
-	fname = "tickers.txt"
+	
+	fname = "stock/tickers.txt"
 
-	operation, *args = arg_parser(sys.argv)
+	operation, *args = arg_parser(args)
 
 	if operation == "Ticker":	
 		pass
@@ -155,7 +156,7 @@ def main(args):
 		pass
 	else:
 		print("Invalid use of '--operation'")
-		
+
 
 def arg_parser(args):
 	"""
