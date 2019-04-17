@@ -73,20 +73,18 @@ class Ticker():
     # initialize objects that are needed
     def __init__(self):
         self.myList = []
-        self.counter = 0
         self.ticker_file_name = "tickers.txt"
 
-    
 
     # function to write 1 ticker per line from URL, save to tickers.txt
-
     def save_tickers(self, n):
-        # max 110 tickers to file
+        counter = 0
+
         for x in range(1,5):
             content=requests.get("https://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQ&page=" + str(x))
             # REGEX to find stock symbol from page.
             self.myList += re.findall(r'<a href="https://www.nasdaq.com/symbol/[^"/]+">\s+([A-Z]+)</a>',str(content.text))
-        # check if ticker is valid using price()
+
         fp = open(self.ticker_file_name, "w")
 
         # Checks to see if the price for the ticker is available.
@@ -96,14 +94,15 @@ class Ticker():
                 return True
             except:
                 return False
-                
+
+        # max 110 tickers to file
         for i in self.myList:
             if is_valid(i):
                 fp.write(i + "\n")
                 counter += 1
-                if counter > n:
+                if counter > int(n):
                     break
-                if counter == n:
+                if counter == int(n):
                     break
         fp.close()
 
