@@ -4,11 +4,11 @@ The second version of the ticker project. This time the files will be class and 
 
 ### Sphinx
 ```
-make html
+	make html
 ```
 To spin up a web server to check the docs
 ```
-python3 -m http.server
+	python3 -m http.server
 ```
 Copy '0.0.0.0' address to browser
 
@@ -19,15 +19,15 @@ Copy '0.0.0.0' address to browser
 
 To run pytests:
 ```
-pytest -v
+	pytest -v
 ``` 
 To check the coverage:
 ```
-pytest --cov=stock
+	pytest --cov=stock
 ```
 To report to check coverage of files:
 ```
-pytest --cov=stock --cov-report html:coverage
+	pytest --cov=stock --cov-report html:coverage
 ```
 A coverage file will be added to the current directory.
 Open './coverage/index.html' in the browser and click on the file to see what is missing coverage.

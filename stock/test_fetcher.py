@@ -1,4 +1,4 @@
-from stock.driver import arg_parser, fetcher
+from stock.driver import arg_parser, fetcher, main
 import stock.driver as driver
 import pytest
 import sqlite3
@@ -11,7 +11,7 @@ def db():
 
 @pytest.fixture
 def fetch():
-	t = "120"
+	t = "60"
 	db = "stock.db"
 	return fetcher(t, db)
 
@@ -24,6 +24,9 @@ def fetch1():
 @pytest.fixture
 def args():
 	return ["5", "300", "stocks_new.db"]
+
+def test_main():
+	m = main(["driver.py", "1=Ticker", "1=5", "2=300", "3=stocks_new.db"])
 
 def test_arg_parser():
 	l = ["o=0","a=1","b=2","c=3"]
@@ -48,3 +51,14 @@ def test_fetch_all_data_60(fetch1, args):
 	# time_limit is 60 seconds
 	fname = os.path.join(os.path.dirname(__file__), 'tickers.txt')
 	f = fetch1.fetch_all_data(args, fname)
+
+def test_main_fetcher():
+	main(['driver.py', '1=Ticker', '1=5', '2=60', '3=stocks_new.db'])
+	main(['driver.py', '2=Fetcher', '1=5', '2=60', '3=stocks_new.db'])
+	main(['driver.py', '3=Query', '1=5', '2=300', '3=stocks_new.db'])
+	main(['driver.py', '4=Stocks', '1=5', '2=300', '3=stocks_new.db'])
+
+
+
+
+
