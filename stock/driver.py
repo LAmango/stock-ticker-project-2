@@ -23,7 +23,7 @@
 # 	Use sqlite3 database.
 # [x] – There should be another function, say fetch all data() of the class that calls the above function for each input ticker.
 # [x] – The fetch all data() function should run for specified time period, say time lim in seconds and update the data in the database table.
-# [] – For each ticker in the tickers.txt file, the database table, should have one row for each minute.
+# [x] – For each ticker in the tickers.txt file, the database table, should have one row for each minute.
 # [x] – The Time column should contain time in the HH:MM format with HH ranging from 00 to 23. There
 # 	should be one and only one row corresponding to a specific value of Time and Ticker.
 # [x] – In order to extract the stock information for a ticker, say ”AAPL”, you should use the iex-api-python
@@ -68,8 +68,8 @@ class fetcher():
 		Fetcher Class
 			
 		args:
-			time_limit - the amount of time to run the fetch_all_data method for.
-			db - name of the database given from a command line arg
+			time_limit: the amount of time to run the fetch_all_data method for.
+			db: name of the database given from a command line arg
 
 		use:
 			initialized the time_limit and database name of the class
@@ -81,8 +81,8 @@ class fetcher():
 	def update_stock(self, ticker, c):
 		"""
 		args:
-			ticker - the ticker to update
-			c - cursor to execute sql commands
+			ticker: the ticker to update
+			c: cursor to execute sql commands
 		use:
 			request info of the ticker and update the database with the info
 		"""
@@ -95,14 +95,14 @@ class fetcher():
 
 		print(stock)
 
-	def fetch_all_data(self, args):
+	def fetch_all_data(self, args, filename):
 		"""
 		use:
 			calls the update_stock method for each ticker in self.tickers.
 			should run for a specific time period
 		"""
 		# get the number of tickers requested
-		with open("tickers.txt") as tickers:
+		with open(filename) as tickers:
 			tickers = [line.split("\n")[0] for line in islice(tickers, int(args[0]))]
 
 		# start and create database
@@ -140,17 +140,8 @@ class fetcher():
 		db.commit()
 		db.close()
 
-def arg_parser(args):
-	"""
-	args:
-		args - sys.argv list
-	use:
-		parses the list and splits them to get rid of the command line flag names
-	"""
-	return [x.split("=")[1] for x in args[1:]]
-
-
-if __name__ == '__main__':
+def main(args):
+	fname = "tickers.txt"
 
 	operation, *args = arg_parser(sys.argv)
 
@@ -158,9 +149,23 @@ if __name__ == '__main__':
 		pass
 	elif operation == "Fetcher":
 		f = fetcher(args[1], args[2])
-		f.fetch_all_data(args)
+		
+		f.fetch_all_data(args, fname)
 	elif operation == "Query":
 		pass
 	else:
 		print("Invalid use of '--operation'")
+		
 
+def arg_parser(args):
+	"""
+	args:
+		args: sys.argv list
+	use:
+		parses the list and splits them to get rid of the command line flag names
+	"""
+	return [x.split("=")[1] for x in args[1:]]
+
+
+if __name__ == '__main__':
+	main(sys.argv)
