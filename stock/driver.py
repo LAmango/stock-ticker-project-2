@@ -201,12 +201,28 @@ class fetcher():
         db.commit()
         db.close()
 
-class Query():
-    def __init__(self):
-        pass
+class Query(fetcher):
+    def __init__(self, time, db):
+        self.time = time
+        self.__db = db
 
     # python3 driver.py --operation=Query --time=15:11 --db="stocks_new.db" --ticker=’YI’
-    def query_output(self, time, file_name, ticker):
+    
+    def query_output(self, ticker):
+        db = sqlite3.connect(self.__db)
+        c = db.cursor()
+        query_table = "select Time, Symbol, Low, High, Open, Close, Price, Volume from StockData where Symbol=\""+ticker+"\" and Time=\""+self.time+"\""
+        print(query_table)
+        myCursor = c.execute(query_table)
+        print(myCursor.rowcount)
+        for row in myCursor.fetchall():
+            print(row)
+
+                # [] – Define a function that prints and/or returns the 
+        #       details corresponding to a specific time and ticker
+        #       symbol to the terminal.
+        # [] – The class must have a method for initialization of its 
+        #       objects and any other methods you feel are necessary.
         pass
 
 def main(args):
@@ -224,8 +240,9 @@ def main(args):
         
         f.fetch_all_data(args, fname)
     elif operation == "Query":
-        myWuery = Query()
-        myQuery.query_output(args[0], args[1], args[2])
+        print(args)
+        myQuery = Query(args[0], args[1])
+        myQuery.query_output(args[2])
 
     else:
         print("Invalid use of '--operation'")
