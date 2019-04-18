@@ -201,6 +201,14 @@ class fetcher():
         db.commit()
         db.close()
 
+class Query():
+    def __init__(self):
+        pass
+
+    # python3 driver.py --operation=Query --time=15:11 --db="stocks_new.db" --ticker=’YI’
+    def query_output(self, time, file_name, ticker):
+        pass
+
 def main(args):
     
     fname = "stock/tickers.txt"
@@ -209,15 +217,16 @@ def main(args):
 
     if operation == "Ticker":
         myTicker = Ticker()
-        print(args)
         myTicker.save_tickers(args[0])    
-        pass
+
     elif operation == "Fetcher":
         f = fetcher(args[1], args[2])
         
         f.fetch_all_data(args, fname)
     elif operation == "Query":
-        pass
+        myWuery = Query()
+        myQuery.query_output(args[0], args[1], args[2])
+
     else:
         print("Invalid use of '--operation'")
 
