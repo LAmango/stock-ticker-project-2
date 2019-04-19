@@ -64,10 +64,10 @@
 ### Query Class ###
 ###################
 
-# [] – Define a function that prints and/or returns the 
+# [x] – Define a function that prints and/or returns the 
 #       details corresponding to a specific time and ticker
 #       symbol to the terminal.
-# [] – The class must have a method for initialization of its 
+# [x] – The class must have a method for initialization of its 
 #       objects and any other methods you feel are necessary.
 
 import sys
@@ -86,12 +86,25 @@ from itertools import islice
 class Ticker():
     # initialize objects that are needed
     def __init__(self):
+        """
+        Ticker Class
+
+        use:
+            initialized the myList and ticker_file_name name of the class
+        """
         self.myList = []
         self.ticker_file_name = "tickers.txt"
 
 
     # function to write 1 ticker per line from URL, save to tickers.txt
     def save_tickers(self, n):
+        """
+        args:
+            n: the number of tickers that should be fetched from the API
+
+        use:
+            fetches valid ticker symbols from API to write to the file
+        """
         counter = 0
 
         for x in range(1,5):
@@ -104,6 +117,15 @@ class Ticker():
 
         # Checks to see if the price for the ticker is available.
         def is_valid(symbol):
+            """
+            args:
+                symbol: the ticker symbol that is being checked
+
+            use:
+                checks to see if the ticker symbol is a valid stock in the API.
+                If price() is False, it will not be writen to the file.
+            """
+            
             try:
                 Stock(symbol).price()
                 return True
@@ -201,33 +223,42 @@ class fetcher():
         db.commit()
         db.close()
 
+
 class Query(fetcher):
     def __init__(self, time, db):
+        """
+        Query Class
+            
+        args:
+            time: the time that quesry will find the info at that time.
+            db: name of the database given from a command line arg.
+
+        use:
+            initialized the time and db name of the class
+        """
         self.time = time
         self.__db = db
 
-    # python3 driver.py --operation=Query --time=15:11 --db="stocks_new.db" --ticker=’YI’
     
     def query_output(self, ticker):
+        """
+        args:
+            ticker: the ticker symbol that query will search the database for.
+
+        use:
+            prints the ticker and its information to the terminal.
+        """
         db = sqlite3.connect(self.__db)
         c = db.cursor()
         query_table = "select Time, Symbol, Low, High, Open, Close, Price, Volume from StockData where Symbol=\""+ticker+"\" and Time=\""+self.time+"\""
-        print(query_table)
         myCursor = c.execute(query_table)
-        print(myCursor.rowcount)
         for row in myCursor.fetchall():
             print(row)
 
-                # [] – Define a function that prints and/or returns the 
-        #       details corresponding to a specific time and ticker
-        #       symbol to the terminal.
-        # [] – The class must have a method for initialization of its 
-        #       objects and any other methods you feel are necessary.
-        pass
 
 def main(args):
     
-    fname = "stock/tickers.txt"
+    fname = "tickers.txt"
 
     operation, *args = arg_parser(args)
 
