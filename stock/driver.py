@@ -137,9 +137,9 @@ class Ticker():
             if is_valid(i):
                 fp.write(i + "\n")
                 counter += 1
-                if counter > int(n):
+                if counter >= int(n):
                     break
-                if counter == int(n):
+                if counter == 110:
                     break
         fp.close()
 
@@ -230,7 +230,7 @@ class Query(fetcher):
         Query Class
             
         args:
-            time: the time that quesry will find the info at that time.
+            time: the time that query will find the info at that time.
             db: name of the database given from a command line arg.
 
         use:
@@ -249,9 +249,13 @@ class Query(fetcher):
             prints the ticker and its information to the terminal.
         """
         db = sqlite3.connect(self.__db)
+        print(db)
         c = db.cursor()
+        print(c)
         query_table = "select Time, Symbol, Low, High, Open, Close, Price, Volume from StockData where Symbol=\""+ticker+"\" and Time=\""+self.time+"\""
+        print(query_table)
         myCursor = c.execute(query_table)
+        print(myCursor)
         for row in myCursor.fetchall():
             print(row)
 
